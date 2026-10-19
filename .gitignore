@@ -1,0 +1,10 @@
+# Environment Variables
+.env
+.env.local
+
+# Node
+node_modules/
+
+# Generated local images
+*.png
+*.jpg

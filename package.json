@@ -1,0 +1,13 @@
+{
+  "name": "flexitap-social-auto-publisher",
+  "version": "1.0.0",
+  "description": "Automated daily social media post and AI image generation publisher for FlexiTap POS via Gemini & Buffer",
+  "main": "auto_publisher.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "node auto_publisher.mjs"
+  },
+  "keywords": ["buffer", "gemini", "imagen", "automation", "social-media"],
+  "author": "",
+  "license": "MIT"
+}

@@ -1,0 +1,28 @@
+name: FlexiTap Daily Social Media Auto Publisher
+
+on:
+  schedule:
+    # 01:00 UTC = 09:00 AM Singapore Time (SGT, UTC+8) every day
+    - cron: '0 1 * * *'
+  workflow_dispatch: # Allows one-click manual testing from GitHub Actions dashboard
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run Auto Publisher
+        env:
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          IMGBB_API_KEY: ${{ secrets.IMGBB_API_KEY }}
+          BUFFER_TARGET_SERVICES: 'facebook,linkedin,twitter'
+        run: node auto_publisher.mjs
