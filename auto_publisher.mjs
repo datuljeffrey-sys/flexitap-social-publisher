@@ -66,57 +66,67 @@ const CURATED_VISUALS = [
   'https://images.unsplash.com/photo-1578474846511-04ba529f0b88?auto=format&fit=crop&w=1080&q=80'  // Pizzeria counter checkout
 ];
 
-// 10 Distinct Feature Modules for Daily Rotation
+// 12 Authentic Feature Modules Extracted Directly from FlexiTap's Website & Architecture
 const FEATURE_MODULES = [
   {
-    name: 'Resilient Offline Architecture & Zero Downtime',
-    tier: 'Core Engine (1 terminal free on Waitlist, multi-device on Founders VIP)',
-    focus: 'What happens when Wi-Fi drops during Friday rush? Orders keep ringing, receipts print, Z-reports save locally. Zero cloud lag, zero dropped sales.'
+    name: 'Live Order Status Display (OSD) & Queue Transparency',
+    tier: 'PAID TIER / Plus & Pro Founders VIP ($290 or $590/yr fixed)',
+    focus: 'Mount any TV or tablet in your lobby to show real-time dual-column pickup board (⏳ Preparing to ✓ Now Serving). Eliminates crowded counters and shouted ticket numbers, auto-synced with KDS over local LAN.'
   },
   {
-    name: '5-Minute Staff Training & Joyful Hospitality UI',
-    tier: 'All Tiers (Free Waitlist & Paid Tiers)',
-    focus: 'High hospitality staff turnover solved. Intuitive touch interface that seasonal hires and new baristas master in 5 minutes with zero frustration.'
+    name: 'Dynamic Digital Menu Boards (DMB) Over Local LAN',
+    tier: 'PAID TIER / Plus & Pro Founders VIP ($290 or $590/yr fixed)',
+    focus: 'Mount any TV or HDMI smart display overhead. Broadcast live menu categories, real-time pricing, and promotional tickers directly over LAN—eliminating costly third-party menu board SaaS subscriptions.'
+  },
+  {
+    name: 'Dedicated Kitchen Display System (KDS) & Paperless Routing',
+    tier: 'PAID TIER / Plus & Pro Founders VIP ($290 or $590/yr fixed)',
+    focus: 'Replace paper clutter and lost kitchen receipts with clean digital prep screens. Incoming tickets route automatically by station (Hot Bar, Cold Prep, Drinks) with visual completion cues and all-caught-up confirmations.'
+  },
+  {
+    name: 'Customer-Facing Display (CDS) & QR Loyalty Sign-Up',
+    tier: 'PAID TIER / Plus & Pro Founders VIP ($290 or $590/yr fixed)',
+    focus: 'Turn any secondary tablet, touch monitor, or compact screen toward your customer. Streams active cart items, taxes, totals, and frictionless QR loyalty sign-up codes in real-time over your private local LAN.'
+  },
+  {
+    name: 'Resilient Offline Architecture & Zero Downtime Guarantee',
+    tier: 'Core Engine (1 terminal free on Waitlist, multi-device on Founders VIP)',
+    focus: 'What happens when Wi-Fi drops during Friday rush? Orders keep ringing, thermal printers print, Z-reports save locally. Zero cloud lag, zero dropped sales.'
+  },
+  {
+    name: 'Visual Table Floor Plans, Seat-Based Ordering & Bill Split',
+    tier: 'PAID TIER / Plus & Pro Founders VIP ($290 or $590/yr fixed)',
+    focus: 'Drag-and-drop table layouts, real-time table statuses, seat-based course ordering, and table-side guest ordering from roaming tablets for restaurants, bistros, and sports bars.'
+  },
+  {
+    name: 'High-Density SKU Retail Flow, Barcode Lookup & Cart Parking',
+    tier: 'All Tiers (Free Waitlist up to 300 orders/mo, Unlimited on Founders VIP)',
+    focus: 'Sub-second barcode and SKU matching, real-time stock levels on every item tile, instant cart suspend/parking to serve the next customer, and instant customer loyalty lookup.'
+  },
+  {
+    name: 'Salon, Spa & Appointment Services with Staff Commission Splits',
+    tier: 'All Tiers (Free Waitlist up to 300 bookings/mo, Unlimited on Founders VIP)',
+    focus: 'Integrated appointment timeline, booking statuses (In-Progress, Confirmed, Scheduled), private treatment suites, and automatic therapist commission calculations right on checkout tickets.'
   },
   {
     name: 'Ask Flexi - The Offline AI Business Analyst',
-    tier: 'PAID TIER & Founders VIP Pass ONLY (Never free waitlist)',
-    focus: 'On-device AI that answers instant operational questions: "What was our highest-margin item tonight?" or "When was our rush peak?" without cloud latency.'
+    tier: 'PAID TIER & Pro Founders VIP Exclusive ($590/yr fixed)',
+    focus: 'On-device natural language AI answering instant operational questions: "What was our highest-margin item tonight?" or "When was our rush peak?" completely offline without cloud latency.'
   },
   {
-    name: 'Real Human Support (Live Calls & Remote Screen Assistance)',
-    tier: 'Launch Promise across All Operators with Priority for Founders VIP',
-    focus: 'Tired of talking to lifeless chatbots when your printer jams at 9 PM on Saturday? FlexiTap has live call support and remote hands-on screen assistance.'
+    name: 'Hardware Freedom (BYOD - Bring Your Own Device)',
+    tier: 'All Tiers Philosophy',
+    focus: 'Zero proprietary hardware lock-in! Works seamlessly with ESC/POS thermal printers (Bluetooth, USB, LAN), standard RJ11 cash drawers, barcode scanners, Android tablets, Windows PCs, iPads, and Macs.'
   },
   {
-    name: 'Cloud Multi-Device Sync & Line-Busting Terminals',
-    tier: 'PAID TIER & Founders VIP Pass (Free waitlist is strictly 1 terminal)',
-    focus: 'Bust long patio lines and lunch rushes with roaming tablets. Orders instantly sync across counter, bar, and outdoor service stations.'
+    name: 'Real Human Support & Done-For-You Menu Setup',
+    tier: 'Founders VIP Guarantee & Launch Promise',
+    focus: 'No lifeless chatbots. FlexiTap provides Live Phone Support, Hands-On Remote Screen Desktop Assistance, Done-For-You Menu Setup, and Launch Shift Standby Support so operators are never stranded.'
   },
   {
-    name: 'Kitchen Display System (KDS) & Order Routing',
-    tier: 'PAID TIER & Founders VIP Pass ONLY',
-    focus: 'Eliminate lost paper tickets and noisy kitchen printers. Digital KDS coordinates order prep times and kitchen pacing smoothly.'
-  },
-  {
-    name: 'Customer Loyalty & VIP Repeat Rewards',
-    tier: 'PAID TIER & Founders VIP Pass ONLY',
-    focus: 'Turn casual first-time diners into passionate weekly regulars with seamless customer profiles and automated rewards at checkout.'
-  },
-  {
-    name: 'Solo Pop-Up, Food Truck & Farmers Market Fast Register',
-    tier: 'Free Launch Waitlist ($0/mo, No Credit Card Required)',
-    focus: 'Single-terminal solo vendors get enterprise offline reliability for $0/mo. No hidden monthly software fees, no lock-in contracts.'
-  },
-  {
-    name: '30+ Years Enterprise Legacy vs Fragile SaaS Startups',
-    tier: 'Brand Heritage Spotlight',
-    focus: 'Why Silicon Valley VC-funded cloud POS apps crash during outages, and how FlexiTap’s 30-year legacy architectural foundation keeps you bulletproof.'
-  },
-  {
-    name: 'Founders VIP Pass Lifetime Price-Lock Countdown',
-    tier: 'Founders VIP Pass Exclusive',
-    focus: 'November 13, 2026 launch is approaching! Lock in lifetime discounted pricing, 1-on-1 white-glove setup, and priority onboarding before slots fill up.'
+    name: 'Free Launch Waitlist ($0/mo) vs Founders VIP Lifetime Price Lock',
+    tier: 'Pricing & VIP Value Comparison',
+    focus: 'Solo pop-ups get $0/mo free for life (1 terminal, offline sales). Growing cafes lock in Plus VIP for $290/year (down from $490) or Pro VIP for $590/year (down from $990) with permanent lifetime price-lock guarantee.'
   }
 ];
 

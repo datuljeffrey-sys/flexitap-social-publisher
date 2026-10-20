@@ -1,0 +1,141 @@
+{
+  "brand": {
+    "name": "FlexiTap POS",
+    "parent_company": "DevBrew",
+    "launch_date": "November 13, 2026",
+    "website": "flexitapapp.com",
+    "official_hashtags": ["#FlexiTapPOS", "#RestaurantTech", "#FoodTruckLife", "#PointOfSale", "#HospitalityTech"],
+    "taglines": [
+      "Enterprise reliability with modern, joyful simplicity",
+      "Wi-Fi down? Sales keep rolling.",
+      "Train staff in 5 minutes. 100% offline resilience.",
+      "Bring your own hardware. Zero vendor lock-in."
+    ]
+  },
+  "modules_and_screens": [
+    {
+      "name": "Master Counter Terminal",
+      "tagline": "High-Speed Cashier Flow & Multi-Ticket Holding",
+      "details": "Rings orders up in milliseconds with quick-category tabs, sub-second SKU matching, seat/guest tracking, and check holding. Cashiers can suspend transactions, process discounts, or split bills with zero lag.",
+      "best_for": "Quick-service counters, fast-casual restaurants, food trucks"
+    },
+    {
+      "name": "Customer-Facing Display (CDS)",
+      "tagline": "Secondary Screen Mirroring & QR Loyalty",
+      "details": "Turns any secondary tablet, touch monitor, or compact screen toward the customer. Streams active cart items, taxes, totals, and frictionless QR loyalty sign-up codes over private local LAN.",
+      "best_for": "Retail checkouts, boba shops, cafes"
+    },
+    {
+      "name": "Dedicated Kitchen Display System (KDS)",
+      "tagline": "Paperless Back-of-House Coordination",
+      "details": "Replaces paper clutter and lost kitchen receipts with clean digital prep screens. Incoming tickets route automatically by station (Hot Bar, Cold Prep, Drinks) with visual completion cues.",
+      "best_for": "Busy kitchens, multi-station restaurants, burger joints"
+    },
+    {
+      "name": "Live Order Status Display (OSD)",
+      "tagline": "Dual-Column Guest Pickup & Queue Transparency",
+      "details": "Eliminates crowded pickup counters and shouted ticket numbers. Mount any TV or tablet in your lobby to show orders moving from '⏳ Preparing' to '✓ Now Serving' the instant kitchen bumps a ticket on KDS.",
+      "best_for": "Food trucks, high-volume lunch counters, boba and coffee shops"
+    },
+    {
+      "name": "Dynamic Digital Menu Boards (DMB)",
+      "tagline": "Overhead Merchandising Over Local LAN",
+      "details": "Mount any TV, HDMI display, or smart screen overhead. Broadcast live menu categories, real-time pricing, and promotional tickers directly over LAN—eliminating expensive third-party menu board SaaS subscriptions.",
+      "best_for": "Cafes, bakeries, food trucks, quick-service eateries"
+    },
+    {
+      "name": "Executive Back Office Reports Hub",
+      "tagline": "Financial Intelligence & Till Audits",
+      "details": "Comprehensive revenue trend curves, product category mix distributions, hourly rush volume, and verified cash & card balance audits. Automatic settlement matching and liability tracking.",
+      "best_for": "Store owners, managers, multi-store operators"
+    },
+    {
+      "name": "Retail & Merchandise Mode",
+      "tagline": "High-Density SKU Inventory & Parked Sales",
+      "details": "Designed for apparel boutiques and retail shops. Instant barcode lookup, real-time stock levels on every item tile, cart parking, and loyalty lookup.",
+      "best_for": "Retail boutiques, convenience stores, merchandise pop-ups"
+    },
+    {
+      "name": "Salon, Spa & Appointment Services",
+      "tagline": "Integrated Timeline Booking & Commission Splits",
+      "details": "Manages appointment timelines, booking statuses (In-Progress, Confirmed, Scheduled), private treatment suites, and automatically calculates therapist commissions right on checkout tickets.",
+      "best_for": "Barbershops, nail salons, massage spas, wellness centers"
+    },
+    {
+      "name": "Visual Table Floor Plans & Dining Mode",
+      "tagline": "Seat-Based Ordering & Guest Check Splits",
+      "details": "Drag-and-drop table layouts, real-time table statuses, seat-based course ordering, and table-side guest ordering from roaming tablets.",
+      "best_for": "Full-service dining, bistros, gastropubs, sports bars"
+    },
+    {
+      "name": "Ask Flexi - Offline AI Business Analyst",
+      "tagline": "On-Device Natural Language Operational Insights",
+      "details": "Ask operational questions like 'What was our best-selling item during lunch rush?' or 'What are my top gross-margin items today?' completely offline with zero cloud lag.",
+      "best_for": "Founders VIP Pass operators wanting actionable intelligence"
+    }
+  ],
+  "hardware_freedom": {
+    "philosophy": "BYOD (Bring Your Own Hardware) - Zero forced hardware proprietary lock-in",
+    "supported_devices": [
+      "Thermal receipt printers (ESC/POS, Bluetooth, USB, LAN/Ethernet)",
+      "Kitchen ticket printers and kitchen display screens",
+      "Barcode scanners (1D & 2D QR scanners, Bluetooth and USB)",
+      "Standard electronic cash drawers (RJ11/RJ12 printer-driven)",
+      "Customer-facing secondary monitors, tablets, and HDMI TVs",
+      "Cross-platform host devices: Android tablets, Windows PCs, Mac, iPads, and modern web browsers"
+    ]
+  },
+  "pricing_tiers": {
+    "free_waitlist": {
+      "price": "$0 / mo",
+      "badge": "No Credit Card Required",
+      "target": "Solo pop-ups, weekend markets, food stalls & kiosks",
+      "features": [
+        "1 Active Terminal Device",
+        "1 Cashier Account",
+        "Up to 300 Retail Orders & Service Bookings / mo (QSR & Restaurant dining have no monthly limits)",
+        "Customer Loyalty & Points Included",
+        "100% Offline Functionality with Local Sales & Daily Reports",
+        "Manual Backup to Google Drive or Local Storage"
+      ],
+      "limitations": "No Cloud Multi-Device Sync, no KDS/CDS/OSD multi-screen routing, no cloud back office"
+    },
+    "plus_founders_vip": {
+      "original_price": "$490 / year",
+      "founders_price": "$290 / year fixed (Lifetime Rate Lock)",
+      "target": "Growing cafes, high-volume food trucks, busy bistros",
+      "features": [
+        "Up to 10 Devices per Store",
+        "Unlimited Orders & Bookings",
+        "Visual Dining Floor Plan Editor",
+        "Up to 5 User Accounts",
+        "Local Device & Web Portal Analytics",
+        "Automated Cloud Backup",
+        "Live Chat Technical Support",
+        "KDS, CDS, OSD & Digital Menu Boards included",
+        "Staff Time Tracking & HR Features",
+        "Customer Loyalty Program"
+      ]
+    },
+    "pro_founders_vip": {
+      "original_price": "$990 / year",
+      "founders_price": "$590 / year fixed (Lifetime Rate Lock)",
+      "target": "Multi-station restaurants, busy sports bars, high-volume hospitality venues",
+      "features": [
+        "Unlimited Devices (Up to 9,999)",
+        "Unlimited Users",
+        "Table-Side / Roaming Guest Ordering",
+        "AI Insights & Ask Flexi Copilot",
+        "Advanced Recipe Inventory & Food Cost Tracking",
+        "Automated Cloud Backup",
+        "Priority Phone, Live Chat & Remote Screen Desktop Assistance",
+        "Full Multi-Screen KDS, CDS, OSD & Dynamic Digital Menu Boards"
+      ]
+    }
+  },
+  "founders_guarantees": [
+    "Done-For-You Menu Setup: FlexiTap team sets up your full menu catalog and inventory",
+    "Permanent Lifetime Price Lock: Never experience unexpected annual SaaS fee hikes",
+    "Launch Shift Standby Support: Dedicated live support on standby for your opening shifts"
+  ]
+}
