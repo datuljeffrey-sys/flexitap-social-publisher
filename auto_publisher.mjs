@@ -286,7 +286,7 @@ async function publishToBuffer(channelId, channelName, service, copyData, imageU
     channelId,
     text,
     schedulingType: 'automatic',
-    mode: 'addToQueue'
+    mode: process.env.BUFFER_SHARE_MODE || 'shareNow'
   };
 
   // Required Facebook metadata

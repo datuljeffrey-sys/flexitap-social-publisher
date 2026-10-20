@@ -2,8 +2,8 @@ name: FlexiTap Daily Social Media Auto Publisher
 
 on:
   schedule:
-    # 01:00 UTC = 09:00 AM Singapore Time (SGT, UTC+8) every day
-    - cron: '0 1 * * *'
+    # 01:05 UTC = 09:05 AM Singapore Time (SGT, UTC+8) every day (off-peak avoids runner queues)
+    - cron: '5 1 * * *'
   workflow_dispatch: # Allows one-click manual testing from GitHub Actions dashboard
 
 jobs:
