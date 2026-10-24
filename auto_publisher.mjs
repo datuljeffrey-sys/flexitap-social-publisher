@@ -232,11 +232,12 @@ Return ONLY a valid JSON object with exactly these keys:
   return JSON.parse(textOutput);
 }
 
-// --- 2. Generate or Source High-Res Image ---
+// --- 2. Generate Truly Unique AI Image Every Run ---
 async function obtainPostImage(imagePrompt) {
-  console.log('🎨 Step 2: Preparing visual asset...');
+  console.log('🎨 Step 2: Generating unique AI visual asset...');
+  const randomSeed = Math.floor(Math.random() * 1000000);
 
-  // 1. Try Google Imagen 3 first if enabled on the API key
+  // 1. Try Google Imagen 3 if enabled on the API key
   try {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${GEMINI_API_KEY}`;
     const response = await fetch(url, {
@@ -259,9 +260,26 @@ async function obtainPostImage(imagePrompt) {
     }
   } catch (_) {}
 
-  // 2. High-reliability fallback: Curated high-resolution hospitality photo
+  // 2. High-performance Free AI Image Generator (Flux Engine - 100% Unique Every Time)
+  try {
+    console.log('   ✨ Generating fresh photorealistic AI image via Flux engine...');
+    const cleanPrompt = encodeURIComponent(imagePrompt.slice(0, 350));
+    const aiUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?width=1080&height=1080&nologo=true&seed=${randomSeed}&model=flux`;
+    
+    // Verify image responds
+    const headRes = await fetch(aiUrl, { method: 'HEAD' });
+    if (headRes.ok) {
+      console.log('   ✅ AI Image generated successfully!');
+      console.log(`   🔗 Direct AI Image URL: ${aiUrl.slice(0, 80)}...`);
+      return aiUrl;
+    }
+  } catch (err) {
+    console.warn('   ⚠️ AI Image engine warning:', err.message);
+  }
+
+  // 3. Last-resort safety fallback
   const randomUrl = CURATED_VISUALS[Math.floor(Math.random() * CURATED_VISUALS.length)];
-  console.log('   📸 Selected high-res hospitality lifestyle photo.');
+  console.log('   📸 Selected fallback lifestyle visual.');
   console.log(`   🔗 Direct Public Image URL: ${randomUrl}`);
   return randomUrl;
 }
