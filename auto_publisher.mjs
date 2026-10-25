@@ -152,55 +152,79 @@ const US_PERSONAS = [
 
 // --- 1. Generate Platform-Tailored Copy via Gemini 3.8 Flash ---
 async function generatePostContent() {
-  // Randomly select one unique feature module, storytelling angle, and persona
-  const selectedModule = FEATURE_MODULES[Math.floor(Math.random() * FEATURE_MODULES.length)];
-  const selectedAngle = COPY_ANGLES[Math.floor(Math.random() * COPY_ANGLES.length)];
-  const selectedPersona = US_PERSONAS[Math.floor(Math.random() * US_PERSONAS.length)];
+  // Use day of year to deterministically cycle through features (Zero chance of consecutive duplicates)
+  const now = new Date();
+  const startOfYear = new Date(now.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
+
+  const moduleIndex = dayOfYear % FEATURE_MODULES.length;
+  const angleIndex = (dayOfYear + 1) % COPY_ANGLES.length;
+  const personaIndex = (dayOfYear + 3) % US_PERSONAS.length;
+
+  const selectedModule = FEATURE_MODULES[moduleIndex];
+  const selectedAngle = COPY_ANGLES[angleIndex];
+  const selectedPersona = US_PERSONAS[personaIndex];
   const randomSeed = Math.floor(Math.random() * 100000);
 
   console.log('🧠 Step 1: Generating tailored post copies via Gemini...');
-  console.log(`   📌 Spotlight Feature: "${selectedModule.name}"`);
+  console.log(`   📅 Day of Year: ${dayOfYear} (Rotation Index: ${moduleIndex + 1}/${FEATURE_MODULES.length})`);
+  console.log(`   📌 TODAY'S EXCLUSIVE TOPIC: "${selectedModule.name}"`);
   console.log(`   🎯 Target Persona: ${selectedPersona}`);
   console.log(`   🎨 Creative Angle: ${selectedAngle}`);
 
+  // Build strict topic instructions
+  const isAskFlexiTopic = selectedModule.name.toLowerCase().includes('ask flexi');
+
   const prompt = `
-You are an expert hospitality and POS marketing copywriter. Generate fresh, high-converting social media posts and an image concept for FlexiTap POS tailored specifically for the US market.
+You are an expert hospitality and POS marketing copywriter. Generate fresh, high-converting social media posts and a matching visual prompt for FlexiTap POS tailored specifically for the US market.
 
-TODAY'S SPECIAL FOCUS (Make this post uniquely centered on these details):
-- Spotlight Feature: ${selectedModule.name}
-- Feature Tier: ${selectedModule.tier}
-- Core Feature Value: ${selectedModule.focus}
-- Target Persona: ${selectedPersona}
-- Storytelling Hook / Angle: ${selectedAngle}
-- Creative Variation Seed: ${randomSeed}
+=======================================================
+STRICT TOPIC MANDATE (CRITICAL - READ CAREFULLY):
+This post MUST be 100% dedicated to TODAY'S EXCLUSIVE FEATURE:
+👉 FEATURE: "${selectedModule.name}"
+👉 APPLICABLE TIER: ${selectedModule.tier}
+👉 KEY DETAILS & BENEFIT: ${selectedModule.focus}
+👉 TARGET VENUE & AUDIENCE: ${selectedPersona}
+👉 NARRATIVE ANGLE: ${selectedAngle}
+👉 VARIATION SEED: ${randomSeed}
 
-Brand Pillars & Context:
-1. Over 30 Years of Deep POS Experience: Enterprise reliability with modern cross-platform software.
-2. Resilient Offline Architecture & Zero Hardware Interruption: 100% offline functionality with local device sales and reports; no interruptions if Wi-Fi drops.
-3. Radical Ease of Use & Positive Vibes: Clean, intuitive design allowing staff training in 5 minutes with friendly, joyful hospitality energy.
-4. Human Support When You Need It: Live Call Support, Hands-On Remote Screen Assistance, and Real-Time Chat Support.
+RULES TO PREVENT REPETITION:
+${isAskFlexiTopic ? `
+- This post IS about "Ask Flexi" (Offline AI Business Analyst). Detail how it crunches operational numbers locally on the device without Wi-Fi. Promoted under the Pro Founders VIP Pass ($590/year fixed).
+` : `
+- DO NOT mention "Ask Flexi" or AI business analyst in this post at all!
+- DO NOT use canned questions like "What was our highest-margin item?" or "When was our rush peak?".
+- Focus entirely and specifically on ${selectedModule.name}.
+`}
 
-Feature Tier Rules:
-- "Ask Flexi" (Offline AI Business Analyst), Cloud Multi-Device Sync, Kitchen Display Systems (KDS), Priority Live Support, and Customer Loyalty are PAID tier features (unlocked via Paid Tiers or the Founders VIP Pass). Never include "Ask Flexi" under the free waitlist.
-- The Free Launch Waitlist ($0/mo, no credit card required) is strictly for solo pop-ups, markets, and kiosks with 1 active terminal, local offline sales, and daily reports.
-- For paid/advanced features, promote the limited-slot Founders VIP Pass (lifetime price-lock guarantee and 1-on-1 setup).
+If the topic is Dynamic Digital Menu Boards (DMB): Focus on overhead TVs, live price updates over LAN, and eliminating $50-$100/mo menu board software subscriptions.
+If the topic is Order Status Display (OSD): Focus on lobby TVs showing "Preparing" vs "Now Serving", stopping crowded counters and shouting customer names.
+If the topic is Kitchen Display System (KDS): Focus on paperless cook stations, order pacing, and zero lost food tickets.
+If the topic is Retail / Barcode Scanning: Focus on sub-second barcode scanners, clothing/boutique inventory, and parking carts when a customer forgets their wallet.
+If the topic is Salon / Spa Services: Focus on appointment booking timelines, room/station scheduling, and calculating therapist commission splits directly on tickets.
+If the topic is Visual Table Floor Plans: Focus on drag-and-drop dining tables, seat-based course pacing, and table-side ordering.
+If the topic is Hardware Freedom (BYOD): Focus on using standard thermal receipt printers (ESC/POS, Bluetooth/USB), cash drawers, Android, iPads, Windows, Mac, and escaping proprietary hardware lock-in from Toast or Clover.
+If the topic is Solo Pop-Up Free Waitlist: Focus on solo weekend market sellers, food carts, 1 terminal, 100% offline sales, and $0/mo with zero credit card needed.
+If the topic is Founders VIP Guarantee: Focus on the $290/year Plus or $590/year Pro lifetime price lock, Done-For-You Menu Setup, and Launch Shift Standby Support.
+=======================================================
 
 Call to Action:
 - Highlight official US Launch on November 13, 2026.
 - Encourage booking at flexitapapp.com or sending a DM.
 - Include 3 to 5 relevant US hashtags, always including #FlexiTapPOS.
 
-Platform Rules:
-- "facebook_text": Engaging story format with fresh phrasing, emojis, feature breakdown, clear tier rules, and CTA. Do NOT reuse common canned opening lines.
+Platform Output Requirements:
+- "facebook_text": Engaging story format with fresh phrasing, emojis, feature breakdown, clear tier rules, and CTA.
 - "linkedin_text": Professional, founder-to-operator tone with clear operational and bottom-line benefits.
 - "twitter_text": MUST be under 260 characters total, punchy, ending with "Nov 13 US Launch: flexitapapp.com #FlexiTapPOS".
+- "image_prompt": A photorealistic visual prompt for Google Imagen/Flux showcasing the specific feature in action (e.g. if KDS, show a kitchen display screen with cooks; if Menu Board, show overhead display; if food truck, show ordering window) with ${selectedPersona}, aspect ratio 1:1.
 
 Return ONLY a valid JSON object with exactly these keys:
 {
   "facebook_text": "...",
   "linkedin_text": "...",
   "twitter_text": "...",
-  "image_prompt": "photorealistic prompt for Google Imagen capturing ${selectedPersona}"
+  "image_prompt": "..."
 }
 `;
 
