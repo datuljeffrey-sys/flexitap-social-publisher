@@ -42,29 +42,46 @@ if (!GEMINI_API_KEY) {
   process.exit(1);
 }
 
-// Curated high-res hospitality lifestyle photography (POS, modern cafes, food trucks, bars, bakeries, markets)
-const CURATED_VISUALS = [
-  'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1080&q=80', // Cozy cafe counter
-  'https://images.unsplash.com/photo-1556742049-0a67c5574f73?auto=format&fit=crop&w=1080&q=80', // Seamless payment checkout
-  'https://images.unsplash.com/photo-1565123409695-7b5ef63a2efb?auto=format&fit=crop&w=1080&q=80', // Food truck service window
-  'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1080&q=80', // Bright coffee shop interior
-  'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1080&q=80', // High-energy restaurant dining
-  'https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1080&q=80', // Modern bistro counter & tables
-  'https://images.unsplash.com/photo-1559925393-8be0ec4767c8?auto=format&fit=crop&w=1080&q=80', // Friendly barista pouring latte
-  'https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=1080&q=80', // Artisan bakery & pastry display
-  'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1080&q=80', // Bustling craft cocktail bar
-  'https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=1080&q=80', // Farmers market fresh stall
-  'https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fit=crop&w=1080&q=80', // Retail boutique register
-  'https://images.unsplash.com/photo-1516738901171-8eb4fc13bd20?auto=format&fit=crop&w=1080&q=80', // Busy urban street food truck
-  'https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?auto=format&fit=crop&w=1080&q=80', // Clean tablet ordering checkout
-  'https://images.unsplash.com/photo-1481833761820-0509d32170dd?auto=format&fit=crop&w=1080&q=80', // Coffee shop register interaction
-  'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1080&q=80', // Restaurant dining floor & servers
-  'https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=1080&q=80', // Warm cafe afternoon hospitality
-  'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1080&q=80', // Craft brewery taproom
-  'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=1080&q=80', // Artisan pancakes & brunch cafe
-  'https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=1080&q=80', // Outdoor patio ordering
-  'https://images.unsplash.com/photo-1578474846511-04ba529f0b88?auto=format&fit=crop&w=1080&q=80'  // Pizzeria counter checkout
-];
+// --- History & Deduplication Memory Engine ---
+const HISTORY_FILE = path.resolve(process.cwd(), 'history.json');
+
+function loadHistory() {
+  try {
+    if (fs.existsSync(HISTORY_FILE)) {
+      const raw = fs.readFileSync(HISTORY_FILE, 'utf-8');
+      const data = JSON.parse(raw);
+      if (Array.isArray(data)) return data;
+    }
+  } catch (err) {
+    console.warn('⚠️ Warning loading history.json:', err.message);
+  }
+  return [];
+}
+
+function saveHistoryEntry(entry) {
+  try {
+    const history = loadHistory();
+    history.push(entry);
+    // Keep a rolling record of the last 30 posts
+    const trimmed = history.slice(-30);
+    fs.writeFileSync(HISTORY_FILE, JSON.stringify(trimmed, null, 2), 'utf-8');
+    console.log(`💾 Saved post to history.json (${trimmed.length} total entries tracked).`);
+  } catch (err) {
+    console.error('⚠️ Could not save history entry:', err.message);
+  }
+}
+
+// Categorized high-res fallback visuals strictly matched by industry (Never random ceiling lights!)
+const INDUSTRY_FALLBACK_VISUALS = {
+  coffee: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1080&q=80',
+  bar: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1080&q=80',
+  bakery: 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=1080&q=80',
+  dining: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1080&q=80',
+  pizza: 'https://images.unsplash.com/photo-1578474846511-04ba529f0b88?auto=format&fit=crop&w=1080&q=80',
+  retail: 'https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fit=crop&w=1080&q=80',
+  foodtruck: 'https://images.unsplash.com/photo-1565123409695-7b5ef63a2efb?auto=format&fit=crop&w=1080&q=80',
+  default: 'https://images.unsplash.com/photo-1556742049-0a67c5574f73?auto=format&fit=crop&w=1080&q=80'
+};
 
 // 12 Authentic Feature Modules Extracted Directly from FlexiTap's Website & Architecture
 const FEATURE_MODULES = [
@@ -91,7 +108,7 @@ const FEATURE_MODULES = [
   {
     name: 'Resilient Offline Architecture & Zero Downtime Guarantee',
     tier: 'Core Engine (1 terminal free on Waitlist, multi-device on Founders VIP)',
-    focus: 'What happens when Wi-Fi drops during Friday rush? Orders keep ringing, thermal printers print, Z-reports save locally. Zero cloud lag, zero dropped sales.'
+    focus: 'What happens when Wi-Fi drops during peak rush? Orders keep ringing, thermal printers print, and Z-reports save locally. Zero cloud lag, zero dropped sales, zero dependency on external servers.'
   },
   {
     name: 'Visual Table Floor Plans, Seat-Based Ordering & Bill Split',
@@ -132,54 +149,80 @@ const FEATURE_MODULES = [
 
 // Diverse Storytelling Hooks & Angles
 const COPY_ANGLES = [
-  'A vivid day-in-the-life storytelling hook about surviving peak rush hour.',
-  'An honest operator-to-operator confessional addressing the hidden pain points of traditional POS systems.',
+  'A vivid day-in-the-life storytelling hook about surviving peak rush hour with zero stress.',
+  'An honest operator-to-operator confessional addressing the hidden pain points and predatory contracts of traditional POS systems.',
   'A sharp, high-contrast comparison between fragile cloud-only POS vs. FlexiTap offline resilience.',
-  'A staff-first perspective highlighting speed, simplicity, and zero training stress.',
-  'A financial-impact angle highlighting lost revenue from downtime and sneaky monthly SaaS charges.',
+  'A staff-first perspective highlighting lightning speed, intuitive controls, and zero training frustration.',
+  'A financial-impact breakdown highlighting preserved revenue, zero surprise SaaS fees, and protected profit margins.',
   'An energetic countdown excitement angle building anticipation toward the November 13, 2026 US launch.'
 ];
 
-// US Market Focus Personas
+// 10 Distinct US Personas & Market Verticals
 const US_PERSONAS = [
-  'Austin, Texas food truck & taco trailer operators battling Wi-Fi drops at outdoor festivals',
   'Brooklyn & Seattle independent specialty coffee shop baristas and cafe owners needing lightning-fast morning checkouts',
-  'Chicago & Denver busy sports bars and craft taprooms managing simultaneous drink orders and open tabs',
-  'Portland & Nashville artisan bakeries and pop-up market vendors needing simple 1-terminal offline sales',
+  'Chicago & Denver busy sports bars and craft taprooms managing simultaneous drink orders, table tabs, and split bills',
+  'Portland & Nashville artisan bakeries and pop-up market vendors needing simple 1-terminal offline sales and cash drawer control',
   'Miami & Los Angeles fast-casual outdoor dining spots with high staff turnover needing instant 5-minute training',
-  'Atlanta & Philadelphia quick-service deli and pizzeria owners looking for zero-hardware crash guarantees'
+  'Atlanta & Philadelphia quick-service deli and pizzeria owners looking for zero-hardware crash guarantees during lunch surges',
+  'San Francisco & San Diego retail clothing boutiques & gift shops needing rapid barcode scanning, inventory lookups, and cart parking',
+  'Dallas & Houston busy full-service steakhouses and BBQ joints needing visual floor plans, seat pacing, and multi-terminal sync',
+  'Phoenix & Scottsdale hair salons, spas, and wellness studios needing staff commission splits and appointment scheduling',
+  'New York City & Boston multi-location fast-casual concepts wanting overhead digital menu boards without SaaS subscriptions',
+  'Austin, Texas food truck & taco trailer operators battling mobile hotspot drops at outdoor events'
 ];
 
-// --- 1. Generate Platform-Tailored Copy via Gemini 3.8 Flash ---
+// --- Select Least-Recently-Used Feature, Persona, and Angle ---
+function selectFreshTopic(history) {
+  const recentEntries = history.slice(-7); // Look back at the last 7 posts
+  const recentFeatures = recentEntries.map(e => e.feature);
+  const recentPersonas = recentEntries.map(e => e.persona);
+  const recentAngles = recentEntries.map(e => e.angle);
+
+  // 1. Pick Feature
+  const unusedFeatures = FEATURE_MODULES.filter(m => !recentFeatures.includes(m.name));
+  const candidateFeatures = unusedFeatures.length > 0 ? unusedFeatures : FEATURE_MODULES;
+  // Pick random from candidates to ensure non-deterministic order
+  const selectedModule = candidateFeatures[Math.floor(Math.random() * candidateFeatures.length)];
+
+  // 2. Pick Persona
+  const unusedPersonas = US_PERSONAS.filter(p => !recentPersonas.includes(p));
+  const candidatePersonas = unusedPersonas.length > 0 ? unusedPersonas : US_PERSONAS;
+  const selectedPersona = candidatePersonas[Math.floor(Math.random() * candidatePersonas.length)];
+
+  // 3. Pick Angle
+  const unusedAngles = COPY_ANGLES.filter(a => !recentAngles.includes(a));
+  const candidateAngles = unusedAngles.length > 0 ? unusedAngles : COPY_ANGLES;
+  const selectedAngle = candidateAngles[Math.floor(Math.random() * candidateAngles.length)];
+
+  return {
+    selectedModule,
+    selectedPersona,
+    selectedAngle,
+    recentEntries
+  };
+}
+
+// --- 1. Generate Platform-Tailored Copy via Gemini ---
 async function generatePostContent() {
-  // Use day of year to deterministically cycle through features (Zero chance of consecutive duplicates)
-  const now = new Date();
-  const startOfYear = new Date(now.getFullYear(), 0, 0);
-  const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
-
-  const moduleIndex = dayOfYear % FEATURE_MODULES.length;
-  const angleIndex = (dayOfYear + 1) % COPY_ANGLES.length;
-  const personaIndex = (dayOfYear + 3) % US_PERSONAS.length;
-
-  const selectedModule = FEATURE_MODULES[moduleIndex];
-  const selectedAngle = COPY_ANGLES[angleIndex];
-  const selectedPersona = US_PERSONAS[personaIndex];
+  const history = loadHistory();
+  const { selectedModule, selectedPersona, selectedAngle, recentEntries } = selectFreshTopic(history);
   const randomSeed = Math.floor(Math.random() * 100000);
 
   console.log('🧠 Step 1: Generating tailored post copies via Gemini...');
-  console.log(`   📅 Day of Year: ${dayOfYear} (Rotation Index: ${moduleIndex + 1}/${FEATURE_MODULES.length})`);
   console.log(`   📌 TODAY'S EXCLUSIVE TOPIC: "${selectedModule.name}"`);
   console.log(`   🎯 Target Persona: ${selectedPersona}`);
   console.log(`   🎨 Creative Angle: ${selectedAngle}`);
 
-  // Build strict topic instructions
+  // Build list of recently used themes for the negative prompt
+  const recentExclusions = recentEntries.map((e, idx) => `  ${idx + 1}. Feature: "${e.feature}" | Persona: "${e.persona}" | Summary: "${e.summary?.slice(0, 70)}..."`).join('\n');
+
   const isAskFlexiTopic = selectedModule.name.toLowerCase().includes('ask flexi');
 
   const prompt = `
 You are an expert hospitality and POS marketing copywriter. Generate fresh, high-converting social media posts and a matching visual prompt for FlexiTap POS tailored specifically for the US market.
 
 =======================================================
-STRICT TOPIC MANDATE (CRITICAL - READ CAREFULLY):
+STRICT TOPIC MANDATE:
 This post MUST be 100% dedicated to TODAY'S EXCLUSIVE FEATURE:
 👉 FEATURE: "${selectedModule.name}"
 👉 APPLICABLE TIER: ${selectedModule.tier}
@@ -188,7 +231,14 @@ This post MUST be 100% dedicated to TODAY'S EXCLUSIVE FEATURE:
 👉 NARRATIVE ANGLE: ${selectedAngle}
 👉 VARIATION SEED: ${randomSeed}
 
-RULES TO PREVENT REPETITION:
+=======================================================
+NEGATIVE EXCLUSION LIST (RECENTLY POSTED - DO NOT REPEAT):
+The following topics and personas were published in the last few days. You are STRICTLY FORBIDDEN from repeating their phrasing, scenarios, or concepts:
+${recentExclusions || '  (No previous posts in history)'}
+
+MANDATORY AVOIDANCE RULES:
+- DO NOT mention tacos, food trucks, outdoor festivals, Wi-Fi cell tower drops on Barton Springs, or South Congress! (This was just posted multiple times).
+- Focus 100% on ${selectedPersona} and their UNIQUE industry reality.
 ${isAskFlexiTopic ? `
 - This post IS about "Ask Flexi" (Offline AI Business Analyst). Detail how it crunches operational numbers locally on the device without Wi-Fi. Promoted under the Pro Founders VIP Pass ($590/year fixed).
 ` : `
@@ -196,16 +246,6 @@ ${isAskFlexiTopic ? `
 - DO NOT use canned questions like "What was our highest-margin item?" or "When was our rush peak?".
 - Focus entirely and specifically on ${selectedModule.name}.
 `}
-
-If the topic is Dynamic Digital Menu Boards (DMB): Focus on overhead TVs, live price updates over LAN, and eliminating $50-$100/mo menu board software subscriptions.
-If the topic is Order Status Display (OSD): Focus on lobby TVs showing "Preparing" vs "Now Serving", stopping crowded counters and shouting customer names.
-If the topic is Kitchen Display System (KDS): Focus on paperless cook stations, order pacing, and zero lost food tickets.
-If the topic is Retail / Barcode Scanning: Focus on sub-second barcode scanners, clothing/boutique inventory, and parking carts when a customer forgets their wallet.
-If the topic is Salon / Spa Services: Focus on appointment booking timelines, room/station scheduling, and calculating therapist commission splits directly on tickets.
-If the topic is Visual Table Floor Plans: Focus on drag-and-drop dining tables, seat-based course pacing, and table-side ordering.
-If the topic is Hardware Freedom (BYOD): Focus on using standard thermal receipt printers (ESC/POS, Bluetooth/USB), cash drawers, Android, iPads, Windows, Mac, and escaping proprietary hardware lock-in from Toast or Clover.
-If the topic is Solo Pop-Up Free Waitlist: Focus on solo weekend market sellers, food carts, 1 terminal, 100% offline sales, and $0/mo with zero credit card needed.
-If the topic is Founders VIP Guarantee: Focus on the $290/year Plus or $590/year Pro lifetime price lock, Done-For-You Menu Setup, and Launch Shift Standby Support.
 =======================================================
 
 Call to Action:
@@ -217,7 +257,7 @@ Platform Output Requirements:
 - "facebook_text": Engaging story format with fresh phrasing, emojis, feature breakdown, clear tier rules, and CTA.
 - "linkedin_text": Professional, founder-to-operator tone with clear operational and bottom-line benefits.
 - "twitter_text": MUST be under 260 characters total, punchy, ending with "Nov 13 US Launch: flexitapapp.com #FlexiTapPOS".
-- "image_prompt": A photorealistic visual prompt for Google Imagen/Flux showcasing the specific feature in action (e.g. if KDS, show a kitchen display screen with cooks; if Menu Board, show overhead display; if food truck, show ordering window) with ${selectedPersona}, aspect ratio 1:1.
+- "image_prompt": A photorealistic commercial photography prompt showcasing a realistic POS setup matching this EXACT venue and feature (e.g. if Kitchen Display, show kitchen pass screen with chefs; if Coffee, show espresso bar with tablet register; if Sports Bar, show taproom counter with tablet POS; if Menu Board, show crisp overhead TV screen). Aspect ratio 1:1, photorealistic, cinematic lighting, 8k.
 
 Return ONLY a valid JSON object with exactly these keys:
 {
@@ -228,40 +268,80 @@ Return ONLY a valid JSON object with exactly these keys:
 }
 `;
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${GEMINI_API_KEY}`;
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        responseMimeType: 'application/json',
-        temperature: 0.9,
-        topP: 0.95
+  const candidateModels = [
+    'gemini-3.5-flash',
+    'gemini-3-flash-preview',
+    'gemini-3.1-flash-lite',
+    'gemini-3.8-flash',
+    'gemini-3.6-flash'
+  ];
+
+  let lastError = null;
+  for (const model of candidateModels) {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        console.log(`   Attempting model ${model} (attempt ${attempt}/2)...`);
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: AbortSignal.timeout(18000),
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              responseMimeType: 'application/json',
+              temperature: 0.9,
+              topP: 0.95
+            }
+          })
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.warn(`   ⚠️ Model ${model} returned ${response.status}: ${errorText.slice(0, 150)}`);
+          lastError = new Error(`Gemini API Error [${model}] (${response.status}): ${errorText}`);
+          if (response.status === 503 && attempt < 3) {
+            console.log('   ⏳ Retrying in 2 seconds...');
+            await new Promise(res => setTimeout(res, 2000));
+            continue;
+          }
+          break;
+        }
+
+        const result = await response.json();
+        const textOutput = result.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!textOutput) {
+          lastError = new Error(`No output received from Gemini [${model}]`);
+          break;
+        }
+
+        console.log(`   ✅ Content generated using ${model}!`);
+        const parsed = JSON.parse(textOutput);
+        return {
+          copyData: parsed,
+          metadata: {
+            feature: selectedModule.name,
+            persona: selectedPersona,
+            angle: selectedAngle
+          }
+        };
+      } catch (err) {
+        console.warn(`   ⚠️ Model ${model} error:`, err.message);
+        lastError = err;
+        break;
       }
-    })
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Gemini API Error (${response.status}): ${errorText}`);
+    }
   }
 
-  const result = await response.json();
-  const textOutput = result.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!textOutput) {
-    throw new Error('No output received from Gemini');
-  }
-
-  return JSON.parse(textOutput);
+  throw lastError || new Error('Failed to generate content with any Gemini model');
 }
 
-// --- 2. Generate Truly Unique AI Image Every Run ---
-async function obtainPostImage(imagePrompt) {
+// --- 2. Generate Truly Unique AI Image & Host on Public CDN ---
+async function obtainPostImage(imagePrompt, persona) {
   console.log('🎨 Step 2: Generating unique AI visual asset...');
   const randomSeed = Math.floor(Math.random() * 1000000);
 
-  // 1. Try Google Imagen 3 if enabled on the API key
+  // 1. Try Google Imagen 3 if available on the key
   try {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${GEMINI_API_KEY}`;
     const response = await fetch(url, {
@@ -284,28 +364,41 @@ async function obtainPostImage(imagePrompt) {
     }
   } catch (_) {}
 
-  // 2. High-performance Free AI Image Generator (Flux Engine - 100% Unique Every Time)
+  // 2. High-performance Free AI Generator (Pollinations default engine - Fast, reliable & free)
   try {
-    console.log('   ✨ Generating fresh photorealistic AI image via Flux engine...');
-    const cleanPrompt = encodeURIComponent(imagePrompt.slice(0, 350));
-    const aiUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?width=1080&height=1080&nologo=true&seed=${randomSeed}&model=flux`;
+    console.log('   ✨ Generating fresh photorealistic AI image...');
+    const cleanPrompt = encodeURIComponent(imagePrompt.slice(0, 300));
+    const aiUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?width=1024&height=1024&nologo=true&seed=${randomSeed}`;
     
-    // Verify image responds
-    const headRes = await fetch(aiUrl, { method: 'HEAD' });
-    if (headRes.ok) {
-      console.log('   ✅ AI Image generated successfully!');
-      console.log(`   🔗 Direct AI Image URL: ${aiUrl.slice(0, 80)}...`);
-      return aiUrl;
+    const imgRes = await fetch(aiUrl);
+    if (imgRes.ok) {
+      const arrayBuffer = await imgRes.arrayBuffer();
+      if (arrayBuffer.byteLength > 10000) {
+        const base64 = Buffer.from(arrayBuffer).toString('base64');
+        console.log(`   ✅ Image generated (${Math.round(arrayBuffer.byteLength / 1024)} KB)! Hosting on ImgBB CDN...`);
+        const hostedUrl = await uploadToPublicCDN(base64);
+        if (hostedUrl) return hostedUrl;
+      }
     }
   } catch (err) {
     console.warn('   ⚠️ AI Image engine warning:', err.message);
   }
 
-  // 3. Last-resort safety fallback
-  const randomUrl = CURATED_VISUALS[Math.floor(Math.random() * CURATED_VISUALS.length)];
-  console.log('   📸 Selected fallback lifestyle visual.');
-  console.log(`   🔗 Direct Public Image URL: ${randomUrl}`);
-  return randomUrl;
+  // 3. Persona-matched high-res fallback visual (Never unrelated stock!)
+  let fallbackKey = 'default';
+  const pLower = (persona || '').toLowerCase();
+  if (pLower.includes('coffee') || pLower.includes('cafe')) fallbackKey = 'coffee';
+  else if (pLower.includes('bar') || pLower.includes('taproom')) fallbackKey = 'bar';
+  else if (pLower.includes('bakery')) fallbackKey = 'bakery';
+  else if (pLower.includes('pizza') || pLower.includes('deli')) fallbackKey = 'pizza';
+  else if (pLower.includes('retail') || pLower.includes('boutique')) fallbackKey = 'retail';
+  else if (pLower.includes('food truck')) fallbackKey = 'foodtruck';
+  else fallbackKey = 'dining';
+
+  const matchedUrl = INDUSTRY_FALLBACK_VISUALS[fallbackKey] || INDUSTRY_FALLBACK_VISUALS.default;
+  console.log(`   📸 Selected industry-matched lifestyle visual (${fallbackKey}).`);
+  console.log(`   🔗 Direct Public Image URL: ${matchedUrl}`);
+  return matchedUrl;
 }
 
 // --- 3. Upload Image to Free Public Host (ImgBB) ---
@@ -314,7 +407,6 @@ async function uploadToPublicCDN(base64Image) {
     return null;
   }
 
-  console.log('☁️ Step 3: Hosting image on ImgBB CDN for Buffer...');
   const formData = new FormData();
   formData.append('image', base64Image);
 
@@ -418,7 +510,6 @@ async function publishToBuffer(channelId, channelName, service, copyData, imageU
   let text = copyData.facebook_text;
   if (serviceKey === 'twitter') {
     text = copyData.twitter_text;
-    // Safety check for 280-char Twitter limit
     if (text.length > 280) {
       text = text.slice(0, 276) + '...';
     }
@@ -489,7 +580,7 @@ async function publishToBuffer(channelId, channelName, service, copyData, imageU
 
   const payload = result.data?.createPost;
   if (payload?.post) {
-    console.log(`   ✅ Queued Successfully! (Post ID: ${payload.post.id}, Status: ${payload.post.status})`);
+    console.log(`   ✅ Sent Successfully! (Post ID: ${payload.post.id}, Status: ${payload.post.status})`);
     return true;
   } else if (payload?.message) {
     console.error(`   ❌ Buffer Error: ${payload.message}`);
@@ -506,18 +597,18 @@ async function main() {
   console.log('==================================================\n');
 
   try {
-    // 1. Generate Platform-Specific Copy
-    const copyData = await generatePostContent();
+    // 1. Generate Platform-Specific Copy with Deduplication Engine
+    const { copyData, metadata } = await generatePostContent();
     console.log('\n📝 Generated Copy Highlights:');
     console.log('--------------------------------------------------');
     console.log(`[Twitter/X (${copyData.twitter_text.length} chars)]:`);
     console.log(copyData.twitter_text);
     console.log('\n[Facebook/LinkedIn Sample]:');
-    console.log(copyData.facebook_text.slice(0, 180) + '...\n');
+    console.log(copyData.facebook_text.slice(0, 220) + '...\n');
     console.log('--------------------------------------------------\n');
 
-    // 2. Obtain Visual Asset (Imagen or Curated Direct CDN)
-    const directImageUrl = await obtainPostImage(copyData.image_prompt);
+    // 2. Obtain Visual Asset (AI generated & hosted on ImgBB CDN)
+    const directImageUrl = await obtainPostImage(copyData.image_prompt, metadata.persona);
 
     // 4. Discover Buffer Channels
     const allChannels = await getBufferChannels();
@@ -544,8 +635,20 @@ async function main() {
       if (ok) successCount++;
     }
 
+    // 6. Record to history.json so future runs never duplicate this
+    if (successCount > 0) {
+      saveHistoryEntry({
+        date: new Date().toISOString(),
+        feature: metadata.feature,
+        persona: metadata.persona,
+        angle: metadata.angle,
+        summary: copyData.facebook_text.slice(0, 140) + '...',
+        imageUrl: directImageUrl
+      });
+    }
+
     console.log('\n==================================================');
-    console.log(`🎉 Finished! Successfully queued across ${successCount}/${channelsToPost.length} channels.`);
+    console.log(`🎉 Finished! Successfully published across ${successCount}/${channelsToPost.length} channels.`);
     console.log('==================================================');
   } catch (err) {
     console.error('\n❌ Automation pipeline error:', err.message);
