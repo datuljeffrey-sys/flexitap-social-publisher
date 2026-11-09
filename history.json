@@ -44,5 +44,41 @@
     "foodCategory": "bakery",
     "summary": "The smell of crusty sourdough loaves hitting the cooling rack and that first, warm bite of a chocolate pain au chocolat—that’s why we do wha...",
     "imageUrl": "https://i.ibb.co/mrhrS3NW/b0518a319fdd.jpg"
+  },
+  {
+    "date": "2026-11-07T01:05:00.000Z",
+    "feature": "High-Speed Quick-Order POS & Modifier Speed",
+    "persona": "Chicago & Denver craft burger joints, sports bars, and taprooms",
+    "angle": "A vivid dinner rush storytelling hook about surviving peak hour with flawless kitchen pacing.",
+    "foodCategory": "burger",
+    "summary": "The sizzle of a double smash burger hitting the flat top, smothered in gooey melted cheddar and served with a mountain of crispy golden fries...",
+    "imageUrl": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=85"
+  },
+  {
+    "date": "2026-11-08T01:05:00.000Z",
+    "feature": "Dedicated Kitchen Display System (KDS) & Paperless Routing",
+    "persona": "Chicago & Denver craft burger joints, sports bars, and taprooms",
+    "angle": "A sharp, high-contrast comparison between fragile cloud-only POS vs. FlexiTap offline local LAN resilience.",
+    "foodCategory": "burger",
+    "summary": "There's nothing like the sound of a sizzling flat top during a Friday night rush in Chicago. Your kitchen is cranking out double smash burgers...",
+    "imageUrl": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=1200&q=85"
+  },
+  {
+    "date": "2026-11-09T01:05:00.000Z",
+    "feature": "Resilient Offline Architecture & Zero Downtime Guarantee",
+    "persona": "Chicago & Denver craft burger joints, sports bars, and taprooms",
+    "angle": "An honest restaurant operator confessional addressing the hidden pain points, frozen screens, and predatory contracts of traditional POS systems.",
+    "foodCategory": "burger",
+    "summary": "There is nothing quite like the sizzle of a double smash burger hitting the flat top, the sharp tang of melted cheddar, and the perfect crunch...",
+    "imageUrl": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=85"
+  },
+  {
+    "date": "2026-11-09T15:40:11.490Z",
+    "feature": "Live Order Status Display (OSD) & Pickup Transparency",
+    "persona": "Atlanta & Philadelphia artisan wood-fired pizzerias and Italian trattorias",
+    "angle": "A kitchen and waitstaff perspective highlighting order accuracy, fast modifiers, and zero training stress.",
+    "foodCategory": "pizza",
+    "summary": "Picture it: The perfect 90-second blistered wood-fired Neapolitan pizza, the mozzarella bubbling to golden perfection, and the vibrant scent...",
+    "imageUrl": "https://i.ibb.co/hxZVfLgS/c4e710cc91ed.jpg"
   }
 ]

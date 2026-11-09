@@ -72,7 +72,7 @@ function saveHistoryEntry(entry) {
 }
 
 // =========================================================================
-// 🍔 🍕 ☕ MOUTH-WATERING, HIGH-CONVERTING FOOD PHOTOGRAPHY DATABASE
+// 🍕 🍔 ☕ MOUTH-WATERING, HIGH-CONVERTING FOOD PHOTOGRAPHY DATABASE
 // High-resolution, commercially licensed food visuals strictly matched by vertical.
 // ZERO watermarks, ZERO blurry empty rooms!
 // =========================================================================
@@ -80,7 +80,7 @@ const FOOD_VISUALS = {
   pizza: [
     'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1200&q=85', // Wood-fired pizza close up
     'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=1200&q=85', // Crispy margherita with fresh basil
-    'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1200&q=85'  // Cheesy pizza slice
+    'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1200&q=85'  // Cheesy pizza slice pull
   ],
   burger: [
     'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=85', // Double smash burger with melted cheese
@@ -236,48 +236,141 @@ const FOOD_PERSONAS = [
   }
 ];
 
-// --- Select Least-Recently-Used Feature, Food Persona, and Angle ---
-function selectFreshTopic(history) {
-  const recentEntries = history.slice(-7);
-  const recentFeatures = recentEntries.map(e => e.feature);
-  const recentPersonas = recentEntries.map(e => e.persona);
-  const recentAngles = recentEntries.map(e => e.angle);
+// --- Deterministic Least-Recently-Used Selector ---
+function getLeastRecentlyUsed(candidates, historyItems, keyFn) {
+  const scored = candidates.map(item => {
+    const val = keyFn ? keyFn(item) : item;
+    const lastIdx = historyItems.lastIndexOf(val);
+    const distance = lastIdx === -1 ? 999999 : (historyItems.length - 1 - lastIdx);
+    return { item, distance };
+  });
+  // Sort descending: greatest distance (least recently used) first
+  scored.sort((a, b) => b.distance - a.distance);
+  return scored[0].item;
+}
 
-  // 1. Pick Feature
-  const unusedFeatures = FEATURE_MODULES.filter(m => !recentFeatures.includes(m.name));
-  const candidateFeatures = unusedFeatures.length > 0 ? unusedFeatures : FEATURE_MODULES;
-  const selectedModule = candidateFeatures[Math.floor(Math.random() * candidateFeatures.length)];
+// Selects next feature, food persona, and angle based on strict least-recently-used rotation
+function selectFreshTopic(history, excludedCategories = []) {
+  const recentFeatures = history.map(e => e.feature).filter(Boolean);
+  const recentPersonas = history.map(e => e.persona).filter(Boolean);
+  const recentAngles = history.map(e => e.angle).filter(Boolean);
 
-  // 2. Pick Food Persona
-  const unusedPersonas = FOOD_PERSONAS.filter(p => !recentPersonas.includes(p.name));
-  const candidatePersonas = unusedPersonas.length > 0 ? unusedPersonas : FOOD_PERSONAS;
-  const selectedPersona = candidatePersonas[Math.floor(Math.random() * candidatePersonas.length)];
+  // 1. Pick Feature (least recently used)
+  const selectedModule = getLeastRecentlyUsed(FEATURE_MODULES, recentFeatures, m => m.name);
 
-  // 3. Pick Angle
-  const unusedAngles = COPY_ANGLES.filter(a => !recentAngles.includes(a));
-  const candidateAngles = unusedAngles.length > 0 ? unusedAngles : COPY_ANGLES;
-  const selectedAngle = candidateAngles[Math.floor(Math.random() * candidateAngles.length)];
+  // 2. Filter out excluded categories (e.g. if rejected by verifier)
+  const validPersonas = FOOD_PERSONAS.filter(p => !excludedCategories.includes(p.foodCategory));
+  const candidatePersonas = validPersonas.length > 0 ? validPersonas : FOOD_PERSONAS;
+  
+  // Pick Food Persona (least recently used)
+  const selectedPersona = getLeastRecentlyUsed(candidatePersonas, recentPersonas, p => p.name);
+
+  // 3. Pick Angle (least recently used)
+  const selectedAngle = getLeastRecentlyUsed(COPY_ANGLES, recentAngles);
 
   return {
     selectedModule,
     selectedPersona,
     selectedAngle,
-    recentEntries
+    recentEntries: history.slice(-7)
   };
 }
 
+// =========================================================================
+// 🛡️ PRE-PUSH DUPLICATE VERIFIER
+// Strictly verifies that the generated copy and visual asset have zero
+// duplicate wording, zero hook overlap, and zero image reuse.
+// =========================================================================
+function verifyPostNotDuplicate(candidateCopy, candidateImageUrl, candidateCategory, history) {
+  console.log('🛡️ Running Pre-Push Duplicate Verification...');
+  const recentEntries = history.slice(-10);
+
+  // 1. Verify Image URL is NOT reused
+  const recentImages = recentEntries.map(e => e.imageUrl).filter(Boolean);
+  if (recentImages.includes(candidateImageUrl)) {
+    return {
+      isClean: false,
+      reason: `REJECTED: Image URL was already used recently (${candidateImageUrl.slice(0, 50)}...)`
+    };
+  }
+
+  // 2. Verify Food Category is not repeated back-to-back
+  if (recentEntries.length > 0) {
+    const lastCategory = recentEntries[recentEntries.length - 1].foodCategory;
+    if (lastCategory && lastCategory === candidateCategory) {
+      return {
+        isClean: false,
+        reason: `REJECTED: Food category "${candidateCategory}" was already published in the previous run.`
+      };
+    }
+    // Also check last 3 runs: cannot appear more than once in last 3 runs
+    const last3Categories = recentEntries.slice(-3).map(e => e.foodCategory).filter(Boolean);
+    if (last3Categories.includes(candidateCategory)) {
+      return {
+        isClean: false,
+        reason: `REJECTED: Food category "${candidateCategory}" appeared in the last 3 days.`
+      };
+    }
+  }
+
+  // 3. Verify Opening Hook & Copy Similarity (Word intersection)
+  const candidateText = candidateCopy.facebook_text || '';
+  const candidateWords = new Set(
+    candidateText.toLowerCase()
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .split(/\s+/)
+      .filter(w => w.length > 3)
+  );
+
+  for (const prev of recentEntries) {
+    const prevText = prev.summary || '';
+    const prevWords = new Set(
+      prevText.toLowerCase()
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .split(/\s+/)
+        .filter(w => w.length > 3)
+    );
+
+    let common = 0;
+    for (const w of candidateWords) {
+      if (prevWords.has(w)) common++;
+    }
+    const union = new Set([...candidateWords, ...prevWords]).size;
+    const similarity = union > 0 ? (common / union) : 0;
+
+    if (similarity > 0.40) {
+      return {
+        isClean: false,
+        reason: `REJECTED: Copy text is too similar (${Math.round(similarity * 100)}% word overlap) to previous post from ${prev.date}. Hook: "${prevText.slice(0, 55)}..."`
+      };
+    }
+
+    // Direct opening line check (first 35 characters)
+    const candOpening = candidateText.slice(0, 35).toLowerCase().trim();
+    const prevOpening = prevText.slice(0, 35).toLowerCase().trim();
+    if (candOpening.length > 15 && prevOpening.length > 15 && candOpening === prevOpening) {
+      return {
+        isClean: false,
+        reason: `REJECTED: Opening line is identical to post from ${prev.date}.`
+      };
+    }
+  }
+
+  console.log('   ✅ Verifier PASSED: Post copy and visual asset are 100% unique!');
+  return { isClean: true };
+}
+
 // --- 1. Generate Food-First Platform-Tailored Copy via Gemini ---
-async function generatePostContent() {
-  const history = loadHistory();
-  const { selectedModule, selectedPersona, selectedAngle, recentEntries } = selectFreshTopic(history);
+async function generatePostContent(history, excludedCategories = []) {
+  const { selectedModule, selectedPersona, selectedAngle, recentEntries } = selectFreshTopic(history, excludedCategories);
   const randomSeed = Math.floor(Math.random() * 100000);
 
-  console.log('🧠 Step 1: Generating food-first social copies via Gemini...');
-  console.log(`   📌 TODAY'S EXCLUSIVE TOPIC: "${selectedModule.name}"`);
+  console.log('🧠 Generating food-first social copies via Gemini...');
+  console.log(`   📌 SELECTED TOPIC: "${selectedModule.name}"`);
   console.log(`   🍽️ FOOD VERTICAL: ${selectedPersona.name} (Featuring: ${selectedPersona.foodItem})`);
   console.log(`   🎨 Creative Angle: ${selectedAngle}`);
 
-  const recentExclusions = recentEntries.map((e, idx) => `  ${idx + 1}. Feature: "${e.feature}" | Persona: "${e.persona}" | Summary: "${e.summary?.slice(0, 70)}..."`).join('\n');
+  const recentExclusions = recentEntries.map((e, idx) => `  ${idx + 1}. Food: "${e.foodCategory || 'N/A'}" | Feature: "${e.feature}" | Summary: "${e.summary?.slice(0, 65)}..."`).join('\n');
 
   const isAskFlexiTopic = selectedModule.name.toLowerCase().includes('ask flexi');
 
@@ -296,15 +389,16 @@ STRICT FOOD & BEVERAGE MANDATE:
 
 MANDATORY COPYWRITING RULES:
 1. APPETIZING FOOD FOCUS: The post MUST immediately mention the delicious food (${selectedPersona.foodItem}) in the opening hook or story! Make the reader taste and visualize the kitchen rush or cafe morning.
-2. CONNECT FOOD TO POS: Vividly contrast the beauty of the food with the chaotic operational reality of restaurant rush hours—and show how FlexiTap POS keeps tickets moving, orders accurate, and cooks synced with zero lag or offline crashes.
-3. CLEAR TIER PRICING: Mention our Plus & Pro Founders VIP Pass ($290 or $590/year flat, locked for life) or $0/mo Free solo waitlist where applicable. No hidden fees.
+2. ZERO BURGER REPETITION: DO NOT mention burgers, smash burgers, or flat tops! (Burgers were just posted). Focus 100% on ${selectedPersona.foodItem}.
+3. CONNECT FOOD TO POS: Vividly contrast the beauty of the food with the chaotic operational reality of restaurant rush hours—and show how FlexiTap POS keeps tickets moving, orders accurate, and cooks synced with zero lag or offline crashes.
+4. CLEAR TIER PRICING: Mention our Plus & Pro Founders VIP Pass ($290 or $590/year flat, locked for life) or $0/mo Free solo waitlist where applicable. No hidden fees.
 ${isAskFlexiTopic ? `
 - This post IS about "Ask Flexi" (Offline AI Restaurant Analyst). Explain how operators ask on-device questions about food margins, sales peaks, and top-selling dishes without internet.
 ` : `
 - DO NOT mention "Ask Flexi" or AI analyst in this post at all. Focus 100% on ${selectedModule.name}.
 `}
 =======================================================
-NEGATIVE EXCLUSION LIST (DO NOT REPEAT):
+NEGATIVE EXCLUSION LIST (RECENTLY POSTED - DO NOT REPEAT):
 ${recentExclusions || '  (No previous posts in history)'}
 
 Call to Action:
@@ -394,12 +488,15 @@ Return ONLY a valid JSON object with exactly these keys:
 }
 
 // --- 2. Select Appetizing Food Image Matching the Post Vertical ---
-async function obtainFoodImage(foodCategory) {
-  console.log(`🎨 Step 2: Selecting mouth-watering food visual for category: "${foodCategory}"...`);
+async function obtainFoodImage(foodCategory, history) {
+  console.log(`🎨 Step 2: Selecting fresh food visual for category: "${foodCategory}"...`);
 
-  const categoryImages = FOOD_VISUALS[foodCategory] || FOOD_VISUALS.burger;
-  // Pick a fresh image from the category pool
-  const selectedFoodUrl = categoryImages[Math.floor(Math.random() * categoryImages.length)];
+  const categoryImages = FOOD_VISUALS[foodCategory] || FOOD_VISUALS.pizza;
+  const recentImages = history.slice(-15).map(e => e.imageUrl).filter(Boolean);
+
+  // Pick an image from this category that was NOT recently used
+  const unusedImages = categoryImages.filter(url => !recentImages.includes(url));
+  const selectedFoodUrl = unusedImages.length > 0 ? unusedImages[0] : categoryImages[0];
   console.log(`   📸 Selected high-res food photo: ${selectedFoodUrl}`);
 
   // Download and host on ImgBB CDN to provide Buffer a lightning-fast direct CDN asset
@@ -526,7 +623,7 @@ async function getBufferChannels() {
 // --- 5. Publish Post to a Channel via Buffer GraphQL ---
 async function publishToBuffer(channelId, channelName, service, copyData, imageUrl) {
   const serviceKey = service.toLowerCase();
-  console.log(`🚀 Step 4: Publishing to [${service.toUpperCase()}] "${channelName}"...`);
+  console.log(`🚀 Publishing to [${service.toUpperCase()}] "${channelName}"...`);
 
   let text = copyData.facebook_text;
   if (serviceKey === 'twitter') {
@@ -611,25 +708,58 @@ async function publishToBuffer(channelId, channelName, service, copyData, imageU
   return true;
 }
 
-// --- Main Execution Flow ---
+// --- Main Execution Flow with Duplicate Verifier ---
 async function main() {
   console.log('==================================================');
   console.log('🍔 FlexiTap POS Food-First Social Media Publisher');
   console.log('==================================================\n');
 
   try {
-    // 1. Generate Food-First Copy with Deduplication Engine
-    const { copyData, foodPersona, metadata } = await generatePostContent();
-    console.log('\n📝 Generated Copy Highlights:');
+    const history = loadHistory();
+    console.log(`📖 Loaded ${history.length} historical post records.`);
+
+    // --- Generation & Pre-Push Verification Loop ---
+    let verifiedCandidate = null;
+    let candidateImageUrl = null;
+    const excludedCategories = [];
+
+    for (let attempt = 1; attempt <= 4; attempt++) {
+      console.log(`\n--- Verification Attempt ${attempt}/4 ---`);
+      
+      const candidate = await generatePostContent(history, excludedCategories);
+      const imgUrl = await obtainFoodImage(candidate.foodPersona.foodCategory, history);
+
+      const verification = verifyPostNotDuplicate(
+        candidate.copyData,
+        imgUrl,
+        candidate.foodPersona.foodCategory,
+        history
+      );
+
+      if (verification.isClean) {
+        verifiedCandidate = candidate;
+        candidateImageUrl = imgUrl;
+        break;
+      } else {
+        console.warn(`⚠️ Verification FAILED: ${verification.reason}`);
+        console.log(`🚫 Excluding category "${candidate.foodPersona.foodCategory}" for re-roll...`);
+        excludedCategories.push(candidate.foodPersona.foodCategory);
+      }
+    }
+
+    if (!verifiedCandidate || !candidateImageUrl) {
+      throw new Error('Pre-Push Duplicate Verifier could not verify a 100% unique post after 4 attempts.');
+    }
+
+    const { copyData, metadata } = verifiedCandidate;
+
+    console.log('\n📝 Verified Copy Ready for Push:');
     console.log('--------------------------------------------------');
     console.log(`[Twitter/X (${copyData.twitter_text.length} chars)]:`);
     console.log(copyData.twitter_text);
     console.log('\n[Facebook/LinkedIn Sample]:');
     console.log(copyData.facebook_text.slice(0, 240) + '...\n');
     console.log('--------------------------------------------------\n');
-
-    // 2. Select Appetizing Food Image Matching the Post
-    const directImageUrl = await obtainFoodImage(foodPersona.foodCategory);
 
     // 3. Discover Buffer Channels
     const allChannels = await getBufferChannels();
@@ -651,7 +781,7 @@ async function main() {
     // 4. Publish to each channel
     let successCount = 0;
     for (const channel of channelsToPost) {
-      const ok = await publishToBuffer(channel.id, channel.name, channel.service, copyData, directImageUrl);
+      const ok = await publishToBuffer(channel.id, channel.name, channel.service, copyData, candidateImageUrl);
       if (ok) successCount++;
     }
 
@@ -664,7 +794,7 @@ async function main() {
         angle: metadata.angle,
         foodCategory: metadata.foodCategory,
         summary: copyData.facebook_text.slice(0, 140) + '...',
-        imageUrl: directImageUrl
+        imageUrl: candidateImageUrl
       });
     }
 
