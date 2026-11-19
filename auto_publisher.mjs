@@ -122,42 +122,42 @@ const FOOD_VISUALS = {
 const FEATURE_MODULES = [
   {
     name: 'Dedicated Kitchen Display System (KDS) & Paperless Routing',
-    tier: 'PAID TIER / Plus & Pro Founders VIP ($290 or $590/yr fixed)',
+    tier: 'Paid Tiers (Plus: $290/yr or Pro: $590/yr flat, locked for life)',
     focus: 'Replace grease-stained paper tickets and lost kitchen chits with clean digital prep screens. Incoming tickets route automatically by station (Hot Line, Fry, Grill, Expo) with visual completion cues and all-caught-up confirmations.'
   },
   {
     name: 'Dynamic Digital Menu Boards (DMB) Over Local LAN',
-    tier: 'PAID TIER / Plus & Pro Founders VIP ($290 or $590/yr fixed)',
+    tier: 'Paid Tiers (Plus: $290/yr or Pro: $590/yr flat, locked for life)',
     focus: 'Mount any overhead TV or HDMI display. Broadcast mouth-watering food photos, daily specials, real-time pricing, and 86\'d sold-out items directly over local LAN—eliminating costly third-party menu board SaaS subscriptions.'
   },
   {
     name: 'Live Order Status Display (OSD) & Pickup Transparency',
-    tier: 'PAID TIER / Plus & Pro Founders VIP ($290 or $590/yr fixed)',
+    tier: 'Paid Tiers (Plus: $290/yr or Pro: $590/yr flat, locked for life)',
     focus: 'Mount any lobby TV to show a real-time dual-column pickup board (⏳ Preparing to ✓ Now Serving). Eliminates crowded counters and shouting customer names, perfectly synced with KDS over local LAN.'
   },
   {
     name: 'Customer-Facing Display (CDS) & QR Loyalty Sign-Up',
-    tier: 'PAID TIER / Plus & Pro Founders VIP ($290 or $590/yr fixed)',
+    tier: 'Paid Tiers (Plus: $290/yr or Pro: $590/yr flat, locked for life)',
     focus: 'Turn any secondary tablet toward your guest. Streams active food items, sides, drinks, modifiers, and frictionless QR loyalty sign-up codes in real-time over your private local LAN without touching the internet.'
   },
   {
     name: 'Resilient Offline Architecture & Zero Downtime Guarantee',
-    tier: 'Core Engine (1 terminal free on Waitlist, multi-device on Founders VIP)',
+    tier: 'Core Engine (1 terminal free on Waitlist, multi-device on Plus & Pro tiers)',
     focus: 'What happens when Wi-Fi drops during Friday dinner rush? Orders keep ringing, thermal kitchen ticket printers print, and registers save locally. Zero cloud lag, zero dropped food orders, zero server lockouts.'
   },
   {
     name: 'Visual Table Floor Plans, Seat-Based Ordering & Bill Split',
-    tier: 'PAID TIER / Plus & Pro Founders VIP ($290 or $590/yr fixed)',
+    tier: 'Paid Tiers (Plus: $290/yr or Pro: $590/yr flat, locked for life)',
     focus: 'Drag-and-drop table layouts, real-time table statuses (Seated, Appetizers, Mains, Paid), seat-based course pacing, and table-side guest ordering from roaming tablets for restaurants, bistros, and sports bars.'
   },
   {
     name: 'High-Speed Quick-Order POS & Modifier Speed',
-    tier: 'All Tiers (Free Waitlist up to 300 orders/mo, Unlimited on Founders VIP)',
+    tier: 'All Tiers (Free Waitlist up to 300 orders/mo, Unlimited on Plus & Pro tiers)',
     focus: 'Sub-second touchscreen response for complex food modifiers (temperature, extra sauce, allergy alerts, side swaps) so cashiers and servers can ring up line-busting orders in 5 seconds.'
   },
   {
     name: 'Ask Flexi - The Offline AI Restaurant Analyst',
-    tier: 'PAID TIER & Pro Founders VIP Exclusive ($590/yr fixed)',
+    tier: 'Pro Tier Exclusive ($590/yr flat, locked for life)',
     focus: 'On-device natural language AI answering instant operational food questions: "What was our highest-margin entree tonight?" or "Which pizza sold best between 6 PM and 8 PM?" completely offline without cloud latency.'
   },
   {
@@ -167,7 +167,7 @@ const FEATURE_MODULES = [
   },
   {
     name: 'Done-For-You Menu Setup & Real Human Support',
-    tier: 'Founders VIP Guarantee & Launch Promise',
+    tier: 'Launch Promise & Human Support Guarantee',
     focus: 'No lifeless chatbots. FlexiTap provides Live Phone Support, Hands-On Remote Screen Desktop Assistance, Done-For-You Menu & Modifier Setup, and Launch Shift Standby Support so restaurant operators are never stranded.'
   },
   {
@@ -176,9 +176,9 @@ const FEATURE_MODULES = [
     focus: 'Bring your own credit card terminal, stick with your existing merchant bank, and avoid forced 3-4% processing rate hikes. Type the total, tap tender in FlexiTap, and close the sale.'
   },
   {
-    name: 'Free Launch Waitlist ($0/mo) vs Founders VIP Lifetime Price Lock',
-    tier: 'Pricing & VIP Value Comparison',
-    focus: 'Solo pop-ups get $0/mo free for life (1 terminal, offline sales). Growing restaurants lock in Plus VIP for $290/year (down from $490) or Pro VIP for $590/year (down from $990) with permanent lifetime price-lock guarantee.'
+    name: 'Free Launch Waitlist ($0/mo) vs Plus & Pro Lifetime Price Lock',
+    tier: 'Pricing & Lifetime Value Comparison',
+    focus: 'Solo pop-ups get $0/mo free for life (1 terminal, offline sales). Growing restaurants lock in Plus for $290/year (down from $490) or Pro for $590/year (down from $990) with permanent lifetime price-lock guarantee.'
   }
 ];
 
@@ -189,7 +189,7 @@ const COPY_ANGLES = [
   'A sharp, high-contrast comparison between fragile cloud-only POS vs. FlexiTap offline local LAN resilience.',
   'A kitchen and waitstaff perspective highlighting order accuracy, fast modifiers, and zero training stress.',
   'A profit-protection breakdown highlighting preserved revenue, zero surprise SaaS fees, and protected restaurant margins.',
-  'An energetic countdown excitement angle building anticipation toward the November 13, 2026 US launch.'
+  'An energetic countdown excitement angle building anticipation toward the November 21, 2026 US launch.'
 ];
 
 // 8 Distinct US Food & Beverage Verticals (Paired directly with Food Categories)
@@ -294,6 +294,17 @@ function verifyPostNotDuplicate(candidateCopy, candidateImageUrl, candidateCateg
     };
   }
 
+  // 2. Strict Prohibition of 'VIP'
+  const candidateText = candidateCopy.facebook_text || '';
+  const twitterText = candidateCopy.twitter_text || '';
+  const linkedinText = candidateCopy.linkedin_text || '';
+  if (/\bvip\b/i.test(candidateText) || /\bvip\b/i.test(twitterText) || /\bvip\b/i.test(linkedinText)) {
+    return {
+      isClean: false,
+      reason: "REJECTED: The forbidden word 'VIP' was detected in the generated copy."
+    };
+  }
+
   // 2. Verify Food Category is not repeated back-to-back
   if (recentEntries.length > 0) {
     const lastCategory = recentEntries[recentEntries.length - 1].foodCategory;
@@ -314,7 +325,6 @@ function verifyPostNotDuplicate(candidateCopy, candidateImageUrl, candidateCateg
   }
 
   // 3. Verify Opening Hook & Copy Similarity (Word intersection)
-  const candidateText = candidateCopy.facebook_text || '';
   const candidateWords = new Set(
     candidateText.toLowerCase()
       .replace(/[^a-z0-9\s]/g, ' ')
@@ -391,7 +401,8 @@ MANDATORY COPYWRITING RULES:
 1. APPETIZING FOOD FOCUS: The post MUST immediately mention the delicious food (${selectedPersona.foodItem}) in the opening hook or story! Make the reader taste and visualize the kitchen rush or cafe morning.
 2. ZERO BURGER REPETITION: DO NOT mention burgers, smash burgers, or flat tops! (Burgers were just posted). Focus 100% on ${selectedPersona.foodItem}.
 3. CONNECT FOOD TO POS: Vividly contrast the beauty of the food with the chaotic operational reality of restaurant rush hours—and show how FlexiTap POS keeps tickets moving, orders accurate, and cooks synced with zero lag or offline crashes.
-4. CLEAR TIER PRICING: Mention our Plus & Pro Founders VIP Pass ($290 or $590/year flat, locked for life) or $0/mo Free solo waitlist where applicable. No hidden fees.
+4. CLEAR TIER PRICING: Mention our Plus ($290/year) & Pro ($590/year) flat lifetime price-lock plans or $0/mo Free solo waitlist where applicable. No hidden fees.
+5. STRICT FORBIDDEN WORD (CRITICAL): NEVER USE THE WORD 'VIP', 'VIP PASS', OR 'VIP TIER' ANYWHERE IN THE POST!
 ${isAskFlexiTopic ? `
 - This post IS about "Ask Flexi" (Offline AI Restaurant Analyst). Explain how operators ask on-device questions about food margins, sales peaks, and top-selling dishes without internet.
 ` : `
@@ -402,14 +413,14 @@ NEGATIVE EXCLUSION LIST (RECENTLY POSTED - DO NOT REPEAT):
 ${recentExclusions || '  (No previous posts in history)'}
 
 Call to Action:
-- Highlight official US Launch on November 13, 2026.
+- Highlight official US Launch on November 21, 2026.
 - Encourage booking at flexitapapp.com or sending a DM.
 - Include 3 to 5 relevant US hashtags, always including #FlexiTapPOS.
 
 Platform Output Requirements:
 - "facebook_text": Engaging story format with mouth-watering food details, operational breakdown, clear tier rules, and CTA.
 - "linkedin_text": Professional restaurant-operator tone with clear throughput, food margin, and bottom-line operational benefits.
-- "twitter_text": MUST be under 260 characters total, punchy, appetizing, ending with "Nov 13 US Launch: flexitapapp.com #FlexiTapPOS".
+- "twitter_text": MUST be under 260 characters total, punchy, appetizing, ending with "Nov 21 US Launch: flexitapapp.com #FlexiTapPOS".
 
 Return ONLY a valid JSON object with exactly these keys:
 {
@@ -711,7 +722,7 @@ async function publishToBuffer(channelId, channelName, service, copyData, imageU
 // --- Main Execution Flow with Duplicate Verifier ---
 async function main() {
   console.log('==================================================');
-  console.log('🍔 FlexiTap POS Food-First Social Media Publisher');
+  console.log('🍔 FlexiTap POS Weekly Recurring Social Media Publisher');
   console.log('==================================================\n');
 
   try {

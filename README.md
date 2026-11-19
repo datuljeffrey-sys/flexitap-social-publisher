@@ -8,14 +8,15 @@ A zero-manual-effort pipeline that automatically generates high-converting marke
 
 ```mermaid
 flowchart LR
-    A["⏰ Daily Trigger"] --> B["🧠 Gemini 2.5 Flash\n(Copy & Prompt)"]
-    B --> C["🎨 Google Imagen 3\n(1:1 Visual)"]
-    C --> D["☁️ Public CDN\n(ImgBB / Cloudinary)"]
-    D --> E["🚀 Buffer GraphQL\n(createPost)"]
-    E --> F["📱 Facebook, X, LinkedIn"]
+    A["⏰ Weekly Trigger"] --> B["🧠 Gemini AI\n(Food-First Copy)"]
+    B --> C["🍔 High-Res Food Visual\n(Mouth-Watering)"]
+    C --> D["☁️ Public CDN\n(ImgBB)"]
+    D --> E["🛡️ Duplicate Verifier\n(Pre-Push Inspection)"]
+    E --> F["🚀 Buffer GraphQL\n(createPost)"]
+    F --> G["📱 Facebook, X, LinkedIn"]
 ```
 
-1. **Copy Generation**: Generates engaging, tailored copy anchored around FlexiTap's 4 brand pillars (30+ years POS experience, 100% offline resilience, 5-min staff training, live human support), respecting tier rules (Free Waitlist vs. Founders VIP Pass) and November 13, 2026 launch CTA.
+1. **Copy Generation**: Generates engaging, tailored copy anchored around FlexiTap's 4 brand pillars (30+ years POS experience, 100% offline resilience, 5-min staff training, live human support), respecting tier rules (Free Waitlist vs. Plus & Pro Lifetime Price Lock) and November 21, 2026 launch CTA.
 2. **AI Visual Generation**: Google Imagen 3 produces photorealistic lifestyle visuals of US restaurant/cafe/food truck setups with FlexiTap POS.
 3. **Public CDN Upload**: Automatically uploads the generated visual to a public CDN so Buffer can attach it directly to your posts.
 4. **Buffer Multi-Channel Publishing**: Queries connected channels and queues the post across Facebook, LinkedIn, and X simultaneously.

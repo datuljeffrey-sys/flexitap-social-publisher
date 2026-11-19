@@ -80,5 +80,32 @@
     "foodCategory": "pizza",
     "summary": "Picture it: The perfect 90-second blistered wood-fired Neapolitan pizza, the mozzarella bubbling to golden perfection, and the vibrant scent...",
     "imageUrl": "https://i.ibb.co/hxZVfLgS/c4e710cc91ed.jpg"
+  },
+  {
+    "date": "2026-11-10T01:01:36.246Z",
+    "feature": "Visual Table Floor Plans, Seat-Based Ordering & Bill Split",
+    "persona": "Brooklyn & Seattle independent specialty coffee shops and espresso bars",
+    "angle": "A profit-protection breakdown highlighting preserved revenue, zero surprise SaaS fees, and protected restaurant margins.",
+    "foodCategory": "coffee",
+    "summary": "Imagine the morning rush: the steam rising from a velvety double-shot espresso with delicate latte art, paired with the buttery crunch of wa...",
+    "imageUrl": "https://i.ibb.co/CsXLkz3N/55065bf22a48.jpg"
+  },
+  {
+    "date": "2026-11-18T01:01:35.503Z",
+    "feature": "Ask Flexi - The Offline AI Restaurant Analyst",
+    "persona": "San Antonio & Austin taco trailers, cantinas, and Mexican street food spots",
+    "angle": "An energetic countdown excitement angle building anticipation toward the November 13, 2026 US launch.",
+    "foodCategory": "tacos",
+    "summary": "The scent of corn tortillas hitting the flat top, the vibrant crunch of fresh cilantro, and that deep, soul-warming consume waiting for your...",
+    "imageUrl": "https://i.ibb.co/chCVY8XH/808925de3dc5.jpg"
+  },
+  {
+    "date": "2026-11-19T22:30:33.552Z",
+    "feature": "Hardware Freedom (BYOD - Bring Your Own Device)",
+    "persona": "Dallas & Houston smoked Texas BBQ pits and bustling steakhouses",
+    "angle": "An energetic countdown excitement angle building anticipation toward the November 21, 2026 US launch.",
+    "foodCategory": "bbq",
+    "summary": "Imagine that perfect slice of slow-smoked Texas beef brisket—the bark is dark and seasoned, the fat is rendered to perfection, and those gli...",
+    "imageUrl": "https://i.ibb.co/XrXKJ3JH/37a3bbd11163.jpg"
   }
 ]

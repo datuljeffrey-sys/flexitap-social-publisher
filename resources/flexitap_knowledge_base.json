@@ -2,7 +2,7 @@
   "brand": {
     "name": "FlexiTap POS",
     "parent_company": "DevBrew",
-    "launch_date": "November 13, 2026",
+    "launch_date": "November 21, 2026",
     "website": "flexitapapp.com",
     "official_hashtags": ["#FlexiTapPOS", "#RestaurantTech", "#FoodTruckLife", "#PointOfSale", "#HospitalityTech"],
     "taglines": [
@@ -71,7 +71,7 @@
       "name": "Ask Flexi - Offline AI Business Analyst",
       "tagline": "On-Device Natural Language Operational Insights",
       "details": "Ask operational questions like 'What was our best-selling item during lunch rush?' or 'What are my top gross-margin items today?' completely offline with zero cloud lag.",
-      "best_for": "Founders VIP Pass operators wanting actionable intelligence"
+      "best_for": "Pro plan operators wanting actionable intelligence"
     }
   ],
   "hardware_freedom": {
@@ -100,9 +100,9 @@
       ],
       "limitations": "No Cloud Multi-Device Sync, no KDS/CDS/OSD multi-screen routing, no cloud back office"
     },
-    "plus_founders_vip": {
+    "plus_plan": {
       "original_price": "$490 / year",
-      "founders_price": "$290 / year fixed (Lifetime Rate Lock)",
+      "launch_price": "$290 / year fixed (Lifetime Rate Lock)",
       "target": "Growing cafes, high-volume food trucks, busy bistros",
       "features": [
         "Up to 10 Devices per Store",
@@ -117,9 +117,9 @@
         "Customer Loyalty Program"
       ]
     },
-    "pro_founders_vip": {
+    "pro_plan": {
       "original_price": "$990 / year",
-      "founders_price": "$590 / year fixed (Lifetime Rate Lock)",
+      "launch_price": "$590 / year fixed (Lifetime Rate Lock)",
       "target": "Multi-station restaurants, busy sports bars, high-volume hospitality venues",
       "features": [
         "Unlimited Devices (Up to 9,999)",
@@ -133,7 +133,7 @@
       ]
     }
   },
-  "founders_guarantees": [
+  "launch_guarantees": [
     "Done-For-You Menu Setup: FlexiTap team sets up your full menu catalog and inventory",
     "Permanent Lifetime Price Lock: Never experience unexpected annual SaaS fee hikes",
     "Launch Shift Standby Support: Dedicated live support on standby for your opening shifts"

@@ -1,9 +1,9 @@
-name: FlexiTap Daily Social Media Auto Publisher
+name: FlexiTap Weekly Social Media Auto Publisher
 
 on:
   schedule:
-    # 01:05 UTC = 09:05 AM Singapore Time (SGT, UTC+8) every day (off-peak avoids runner queues)
-    - cron: '5 1 * * *'
+    # Runs once a week on Monday at 01:05 UTC (09:05 AM SGT)
+    - cron: '5 1 * * 1'
   workflow_dispatch: # Allows one-click manual testing from GitHub Actions dashboard
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Run Auto Publisher with Duplicate Verifier
+      - name: Run Weekly Publisher with Duplicate Verifier
         env:
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -37,5 +37,5 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
           git add history.json
-          git commit -m "chore: Update post history log [skip ci]" || echo "No changes to commit"
+          git commit -m "chore: Update weekly post history log [skip ci]" || echo "No changes to commit"
           git push origin main
