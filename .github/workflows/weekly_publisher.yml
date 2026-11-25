@@ -1,9 +1,10 @@
 name: FlexiTap Weekly Social Media Auto Publisher
 
 on:
-  schedule:
-    # Runs once a week on Monday at 01:05 UTC (09:05 AM SGT)
-    - cron: '5 1 * * 1'
+  # Automated schedule paused per user request
+  # schedule:
+  #   # Runs once a week on Monday at 01:05 UTC (09:05 AM SGT)
+  #   - cron: '5 1 * * 1'
   workflow_dispatch: # Allows one-click manual testing from GitHub Actions dashboard
 
 jobs:

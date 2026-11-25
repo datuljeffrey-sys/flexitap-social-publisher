@@ -152,5 +152,32 @@
     "foodCategory": "real_ui_dashboard",
     "summary": "🎉 THE WAIT IS OVER! FlexiTap POS is officially LIVE and ready to transform your business! 🚀\n\nTake a look at the real dashboard in action. Our sleek, modern da...",
     "imageUrl": "https://i.ibb.co/PsZ9ZQq8/0d4c532701a7.jpg"
+  },
+  {
+    "date": "2026-11-23T01:31:16.394Z",
+    "feature": "100% Processor Freedom (Keep Your Card Machine & Low Rates)",
+    "persona": "Nashville & Miami weekend brunch bistros and breakfast cafes",
+    "angle": "A sharp, high-contrast comparison between fragile cloud-only POS vs. FlexiTap offline local LAN resilience.",
+    "foodCategory": "brunch",
+    "summary": "The Sunday morning rush in Nashville is legendary. Stacks of golden, fluffy pancakes dripping with pure maple syrup and wild blueberries hit...",
+    "imageUrl": "https://i.ibb.co/dwpGqJmv/f2a4cc864a6d.jpg"
+  },
+  {
+    "date": "2026-11-24T01:01:27.866Z",
+    "feature": "Free Launch Waitlist ($0/mo) vs Plus & Pro Lifetime Price Lock",
+    "persona": "Portland & San Francisco artisan bakeries and French pastry cafes",
+    "angle": "An honest restaurant operator confessional addressing the hidden pain points, frozen screens, and predatory contracts of traditional POS systems.",
+    "foodCategory": "bakery",
+    "summary": "There is nothing quite like the sound of a perfectly crusty sourdough loaf hitting the cooling rack or the smell of warm chocolate pain au c...",
+    "imageUrl": "https://i.ibb.co/PZrhybQn/d6e2af2e5064.jpg"
+  },
+  {
+    "date": "2026-11-25T01:01:41.465Z",
+    "feature": "Customer-Facing Display (CDS) & QR Loyalty Sign-Up",
+    "persona": "Chicago & Denver craft burger joints, sports bars, and taprooms",
+    "angle": "A kitchen and waitstaff perspective highlighting order accuracy, fast modifiers, and zero training stress.",
+    "foodCategory": "burger",
+    "summary": "Nothing beats the sight of a juicy double smash burger with melted cheddar and crispy golden fries coming off the line during a Chicago Frid...",
+    "imageUrl": "https://i.ibb.co/V0pMSypn/bb8c8f259678.jpg"
   }
 ]
